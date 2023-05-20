@@ -1,0 +1,13 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <li><a href="/account" data-toggle="modal"><i class="icon-user"></i>@context.User.Identity?.Name</a></li>
+        <li>
+            <form method="post" action="Identity/Account/LogOut">
+                <button type="submit" class="nav-link btn btn-link">Log out</button>
+            </form>
+        </li>
+    </Authorized>
+    <NotAuthorized>
+        <li><a href="/login"><i class="icon-user"></i>Login</a></li>
+    </NotAuthorized>
+</AuthorizeView>

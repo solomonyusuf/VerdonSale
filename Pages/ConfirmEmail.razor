@@ -1,0 +1,76 @@
+﻿@page "/confirm-email"
+@page "/confirm-email/{ID}"
+@using System.Security.Claims
+@using VerdonSale.Services
+@inject RequestLoggerService _request
+@inject MailService _mail
+@inject UserManager<AppUser> _user
+@inject ApplicationDbContext _db
+
+		@if(ID == null)
+		{
+			<main class="main">
+				<div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/backgrounds/login-bg.jpg')">
+					<div class="container">
+						<div class="form-box">
+							<div class="form-tab">
+								<h4 class="col-md-10 col-sm-10">
+									please check your email for confirmation.
+								</h4>
+							</div><!-- End .form-tab -->
+						</div><!-- End .form-box -->
+					</div><!-- End .container -->
+				</div><!-- End .login-page section-bg -->
+			</main>
+
+			<!-- End .main -->
+		}
+		
+		@if(ID != null)
+		{
+			<main class="main">
+				<div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/backgrounds/login-bg.jpg')">
+					<div class="container">
+						<div class="form-box">
+							<div class="form-tab">
+								<h4 class="col-md-10 col-sm-10">
+									Email Confirmed.
+								</h4>
+							</div><!-- End .form-tab -->
+						</div><!-- End .form-box -->
+					</div><!-- End .container -->
+				</div><!-- End .login-page section-bg -->
+			</main>
+
+			<!-- End .main -->
+		}
+		
+		
+
+@code
+{
+	[Parameter]
+	public string ID { get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		if(ID != null)
+			await ConfirmAcct();
+	}
+
+	/***This method logs the user in***/
+	public async Task ConfirmAcct()
+	{
+		try
+		{
+			var user = await _db.User.Where(x=> x.Id.ToString() == ID).SingleAsync();
+			user.EmailConfirmed = true;
+			_db.User.Update(user);
+			await _db.SaveChangesAsync();
+		}
+		catch(Exception ex)
+		{
+			Console.WriteLine(ex);
+		}
+	}
+
+}
