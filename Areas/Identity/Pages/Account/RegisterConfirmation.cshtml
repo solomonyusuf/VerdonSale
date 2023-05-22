@@ -3,21 +3,26 @@
 @{
     ViewData["Title"] = "Register confirmation";
 }
+<div class="container" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
 
-<h1>@ViewData["Title"]</h1>
-@{
-    if (@Model.DisplayConfirmAccountLink)
-    {
-<p>
-    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
-    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
-</p>
-    }
-    else
-    {
-<p>
-        Please check your email to confirm your account.
-</p>
-    }
-}
+                <div class="form-box">
+                    <a href="/" align="center">
+                        <img src="~/assets/images/demos/demo-7/logo.png" alt=" Logo" width="105" height="25">
+                    </a>
+                    <div class="form-tab">
+                        <div class="tab-content" id="tab-content-5">
+                            <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="signin-tab">
+                                <h3>Register Confirmation</h3>
+                                <p>please check your mail box.</p>
+                            </div><!-- .End .tab-pane -->
 
+                        </div><!-- End .form-box -->
+                    </div><!-- End .modal-body -->
+                </div><!-- End .modal-content -->
+            </div><!-- End .modal-dialog -->
+        </div><!-- End .modal -->
+    </div>
+</div>

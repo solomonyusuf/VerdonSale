@@ -3,9 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+	  <NoWarn>SYSLIB0003</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-VerdonSale-BE222A2D-1C38-46CF-AB51-8E7ED7243E36</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <Content Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <EmbeddedResource Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <None Remove="Areas\Identity\Pages\Account\Manage\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="1.7.3" />
