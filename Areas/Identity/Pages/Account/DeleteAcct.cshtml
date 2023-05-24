@@ -1,0 +1,22 @@
+﻿@page "/delete"
+@using Microsoft.AspNetCore.Identity
+@using VerdonSale.Models
+@using VerdonSale.Service
+@attribute [IgnoreAntiforgeryToken]
+@inject UserService _user
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> _userManager
+@functions {
+    
+    public async Task<IActionResult> OnGetAsync()
+    {
+        if (SignInManager.IsSignedIn(User))
+        {
+            var user = await _user.GetUser();
+            await SignInManager.SignOutAsync();
+            await _userManager.DeleteAsync(user);
+        }
+
+        return LocalRedirect("/products");
+    }
+}

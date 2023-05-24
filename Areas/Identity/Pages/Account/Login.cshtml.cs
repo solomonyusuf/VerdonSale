@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using VerdonSale.Models;
+using VerdonSale.Service;
 
 namespace VerdonSale.Areas.Identity.Pages.Account
 {
@@ -24,14 +25,20 @@ namespace VerdonSale.Areas.Identity.Pages.Account
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IHttpContextAccessor _http;
+        private readonly UserService _user;
 
         public LoginModel(SignInManager<AppUser> signInManager,
             ILogger<LoginModel> logger,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            IHttpContextAccessor http,
+            UserService user)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _http = http;
+            _user = user;
         }
 
         [BindProperty]
@@ -89,6 +96,8 @@ namespace VerdonSale.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+               
                      return LocalRedirect("/products");
                 }
                 if (result.RequiresTwoFactor)

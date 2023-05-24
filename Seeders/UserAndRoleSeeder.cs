@@ -39,6 +39,21 @@ namespace VerdonSale.Seeders
                         userManager.AddToRoleAsync(user, "Admin").Wait();
                     }
                 }
+                if (userManager.FindByNameAsync
+                       ("user@gmail.com").Result == null)
+                {
+                    var user = new AppUser();
+                    user.UserName = "user@gmail.com";
+                    user.Email = "user@gmail.com";
+                    user.EmailConfirmed = true;
+                    IdentityResult result = userManager.CreateAsync
+                    (user, "Solomon12!").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "User").Wait();
+                    }
+                }
 
                 
                

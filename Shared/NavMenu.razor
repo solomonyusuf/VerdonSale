@@ -6,9 +6,15 @@
                     <a href="#">MENU</a>
                     <div class="header-menu">
                         <ul>
+                            
+                           <AuthorizeView>
+                               <NotAuthorized>
                             <li class="active">
-                                <a href="/">Home</a>
-                            </li>
+                                    <a href="/">Home</a>
+                                </li>
+                                </NotAuthorized>
+                           </AuthorizeView>
+                          
                             <li>
                                 <a href="/products">products</a>
                             </li>
@@ -51,7 +57,7 @@
                                 <a href="/blog">Blog</a>
                             </li>
                             <li>
-                                <a href="/admin/login">Admin</a>
+                                <a href="/dashboard">Admin</a>
                             </li>
                         </ul>
                     </div><!-- End .header-menu -->
@@ -135,7 +141,7 @@
                             <a href="/blog">Blog</a>
                         </li>
                         <li>
-                            <a href="/admin/login">Admin</a>  
+                            <a href="/dashboard">Admin</a>  
                         </li>
                     </ul><!-- End .menu -->
                 </nav><!-- End .main-nav -->

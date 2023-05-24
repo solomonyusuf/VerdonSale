@@ -53,9 +53,11 @@ builder.Services.AddScoped<RoleManager<IdentityRole>>();
 // register system services
 builder.Services.AddTransient<RequestLoggerService>();
 builder.Services.AddScoped<StaticFileSeeder>();
+builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<UploadService>();
 builder.Services.AddTransient<MailService>();
 builder.Services.AddTransient<MailSettings>();
+
 
 var app = builder.Build();
 

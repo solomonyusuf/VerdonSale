@@ -4,7 +4,7 @@
 @inject IHttpContextAccessor _context
 @inject NavigationManager router
 @inject IJSRuntime _js
-
+@attribute [Authorize(Roles = "Admin,Manager")]
 
 <PageTitle>VerdonSale</PageTitle>
 <head>
@@ -15,8 +15,6 @@
 </head>
 
   <div class="container-scroller">
-    <AuthorizeView Roles="Admin,Manager">
-        <Authorized>
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row default-layout-navbar">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
@@ -24,23 +22,7 @@
                     <a class="navbar-brand brand-logo-mini" href="index-2.html"><img src="images/logo-mini.svg" alt="logo" /></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-stretch">
-                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                        <span class="fas fa-bars"></span>
-                    </button>
-                    <ul class="navbar-nav">
-                        <li class="nav-item nav-search d-none d-md-flex">
-                            <div class="nav-link">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-search"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Search" aria-label="Search">
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+               
                     <ul class="navbar-nav navbar-nav-right">
                         <li class="nav-item d-none d-lg-flex">
                             <a class="nav-link" href="#">
@@ -212,22 +194,15 @@
                 </div>
             </nav>
             <!-- partial -->
-        </Authorized>
-    </AuthorizeView>
+
     
     <div class="container-fluid page-body-wrapper">
-        <AuthorizeView Roles="Admin,Manager">
-            <Authorized>
+
                 <!-- partial:partials/_sidebar.html -->
                 <AdminSidepanel />
-                <!-- partial -->
-            </Authorized>
-        </AuthorizeView>
-     
+           
       <div class="main-panel">
           @Body
-          <AuthorizeView Roles="Admin,Manager">
-        <Authorized>
             <!-- partial:partials/_footer.html -->
             <footer class="footer">
                 <div class="d-sm-flex justify-content-center justify-content-sm-between">
@@ -235,8 +210,7 @@
                 </div>
             </footer>
             <!-- partial -->
-            </Authorized>
-            </AuthorizeView>
+
         </div>
       <!-- main-panel ends -->
     </div>

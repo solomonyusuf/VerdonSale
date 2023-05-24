@@ -8,27 +8,28 @@
 @inject UploadService _service
 @layout AdminLayout
 
-<Toasts class="p-3" Placement="ToastsPlacement.TopRight" />
-<div class="w-full px-6 py-6 mx-auto">
- <div class="card shadow">
-        <div class="card-body flex-auto p-6">
-            <h1 class="mb-0 font-bold">Add Category</h1><br />
-          <EditForm Model="category" OnSubmit="@Post">
-                <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Category Image</label>
-                <div class="mb-4 form-group">
-                    <InputFile OnChange="@UploadImg" class="form-control focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" />
+
+<div  class="content-wrapper">
+            <div class="col-md-6 grid-margin">
+              <div class="card shadow">
+                <div class="card-body">
+                  <h4 class="card-title">Add Category</h4>
+                 <EditForm Model="category" OnSubmit="@Post" class="forms-sample">
+                    <div class="form-group">
+                    <label>Category Image</label>
+                      <InputFile class="form-control" OnChange="@UploadImg" />
+                    </div>
+                    <div class="form-group">
+                    <label for="exampleInputEmail1">Category Name</label>
+                      <InputText @bind-Value="@category.CategoryName" type="text" class="form-control" id="exampleInputEmail1" />
+                    </div>
+                   
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                  </EditForm>
                 </div>
-                <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Category Name</label>
-                <div class="mb-4">
-                    <InputText @bind-Value="@category.CategoryName" type="text" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Category Name" aria-label="Email" aria-describedby="email-addon" />
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="inline-block w-full px-6 py-3 mt-6 mb-0 transition-all font-bold text-center text-white uppercase align-middle  border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in bg-gradient-to-tl from-blue-600 to-purple-400 hover:scale-102 hover:shadow-soft-xs">Submit</button>
-                </div>
-            </EditForm>
-        </div>
- </div>
- </div>
+              </div>
+            </div>
+</div>
 @code{
     public Category category = new();
 

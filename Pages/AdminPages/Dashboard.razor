@@ -1,5 +1,6 @@
 ﻿@page "/dashboard"
 @layout AdminLayout
+@attribute [Authorize(Roles = "Admin,Manager")]
 
         <div class="content-wrapper">
           <div class="page-header">
