@@ -5,8 +5,11 @@
 @inject IHttpContextAccessor _context
 @inject NavigationManager router
 @inject IJSRuntime _js
-
-
+@inject UserManager<AppUser> _userMananager
+@attribute [Authorize(Roles = "Admin,Manager")]
+@inject UserService _user
+@inject MainService main
+@inject ApplicationDbContext _db
 <PageTitle>VerdonSale</PageTitle>
 <head>
     <!-- Plugins CSS File -->
@@ -307,3 +310,6 @@
             </div><!-- End .social-icons -->
         </div><!-- End .mobile-menu-wrapper -->
     </div><!-- End .mobile-menu-container -->
+
+
+    

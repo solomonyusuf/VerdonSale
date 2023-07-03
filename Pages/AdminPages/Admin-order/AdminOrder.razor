@@ -1,0 +1,256 @@
+﻿@page "/admin/orders"
+@layout AdminLayout
+@inject SalesDbContext _db
+
+
+<div class="col-md-12 col-sm-12">
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">
+             Orders
+            </h3>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                        <div class="row">
+                            <div style="margin-right:7px;">
+                                <h4 class="card-title">Pending</h4>
+                            </div>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </div>
+                                    <input step="any" @bind-value="@pinput" @oninput="SearchPending" type="text" class="form-control" placeholder="Search @porders.Value.Count() orders" aria-label="Search" />
+                                </div>
+                            </div>
+                        </div>
+
+                   <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Phone No.</th>
+                          <th>City/State</th>
+                          <th>Country</th>
+                          <th>Status</th>
+                          <th>Confirmed</th>
+                          <th>Payment</th>
+                          <th>Delivered</th>
+                          <th>Stamp</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @if (porders.Value.Count() == 0 || porders.Value == null)
+                        {
+                              <tr>
+                                    <td>
+                                        <h5 style="color:red;">No data available...</h5>
+                                    </td>
+                                </tr>
+                        }
+                        @if (porders.Value.Count() > 0 || porders.Value != null)
+                        {
+                            @foreach (var item in porders.Value)
+                            {
+                                <tr>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.City/ @item.State</td>
+                                    <td><label class="badge badge-danger badge-pill">@item.Status</label></td>
+                                    <td>@item.Confirmed</td>
+                                    <td>@item.Payment</td>
+                                    <td>@item.Stamp</td>
+                                    <td><button class="btn btn-outline-primary">View</button></td>
+
+                                </tr>
+                            }
+                        }
+                                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                    <div class="row" >
+                        <div style="margin-right:7px;">
+                               <h4 class="card-title">Confirmed</h4>
+                        </div>
+                        <div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </div>
+                                    <input step="any" @bind-value="@cinput" @oninput="SearchConfirmed" type="text" class="form-control" placeholder="Search @corders.Value.Count() orders" aria-label="Search" />
+                                </div>
+                        </div>
+                    </div>
+                 
+
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone No.</th>
+                                        <th>City/State</th>
+                                        <th>Country</th>
+                                        <th>Status</th>
+                                        <th>Confirmed</th>
+                                        <th>Payment</th>
+                                        <th>Delivered</th>
+                                        <th>Stamp</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (corders.Value.Count() == 0 || corders.Value == null)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <h5 style="color:red;">No data available...</h5>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (corders.Value.Count() > 0 || corders.Value != null)
+                                    {
+                                        @foreach (var item in corders.Value)
+                                        {
+                                            <tr>
+                                                <td>@item.FirstName</td>
+                                                <td>@item.PhoneNumber</td>
+                                                <td>@item.City/ @item.State</td>
+                                                <td><label class="badge badge-danger badge-pill">@item.Status</label></td>
+                                                <td>@item.Confirmed</td>
+                                                <td>@item.Payment</td>
+                                                <td>@item.Stamp</td>
+                                                <td><button class="btn btn-outline-primary">View</button></td>
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            </div>
+            </div>
+
+@code {
+    #nullable disable
+    public string pinput;
+    public string cinput;
+    public BehaviorSubject<List<Order>> porders = new BehaviorSubject<List<Order>>(new List<Order>());
+    public BehaviorSubject<List<Order>> corders = new BehaviorSubject<List<Order>>(new List<Order>());
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllPending();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<BehaviorSubject<List<Order>>> GetAllConfirmed()
+    {
+        try
+        {
+            var entity = await _db.Orders.Where(x => x.Confirmed == true).ToListAsync();
+            corders.OnNext(entity);
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        return corders;
+    }
+    
+    public async Task<BehaviorSubject<List<Order>>> GetAllPending()
+    {
+        try
+        {
+            var entity = await _db.Orders.Where(x => x.Confirmed == false).ToListAsync();
+            porders.OnNext(entity);
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        return porders;
+    }
+
+
+    public async void SearchConfirmed(ChangeEventArgs args)
+    {
+        try
+        {
+
+            var value = args.Value.ToString();
+            if (value == null)
+            {
+                await GetAllConfirmed();
+            }
+            var filter = GetAllConfirmed().Result.Value
+            .Where(x =>  x.FirstName.ToLowerInvariant().Contains(value.ToLowerInvariant()) ||
+                         x.MiddleName.ToLowerInvariant().Contains(value.ToLowerInvariant())||
+                         x.OrderId.ToString().ToLowerInvariant().Contains(value.ToLowerInvariant()) ||
+                         x.PhoneNumber.ToLowerInvariant().Contains(value.ToLowerInvariant())||
+                         x.Stamp.ToString().ToLowerInvariant().Contains(value.ToLowerInvariant())
+            ).ToList();
+
+          
+            corders.OnNext(filter);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    
+    public async void SearchPending(ChangeEventArgs args)
+    {
+        try
+        {
+
+            var value = args.Value.ToString();
+            if (value == null)
+            {
+                await GetAllPending();
+            }
+            var filter = GetAllPending().Result.Value
+            .Where(x =>  x.FirstName.ToLowerInvariant().Contains(value.ToLowerInvariant()) ||
+                         x.MiddleName.ToLowerInvariant().Contains(value.ToLowerInvariant())||
+                         x.OrderId.ToString().ToLowerInvariant().Contains(value.ToLowerInvariant()) ||
+                         x.PhoneNumber.ToLowerInvariant().Contains(value.ToLowerInvariant())||
+                          x.Stamp.ToString().ToLowerInvariant().Contains(value.ToLowerInvariant())
+            ).ToList();
+
+          
+            porders.OnNext(filter);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+}

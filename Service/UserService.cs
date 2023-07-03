@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Reactive.Subjects;
+using VerdonSale.Data;
 using VerdonSale.Models;
 
 namespace VerdonSale.Service
@@ -9,21 +11,18 @@ namespace VerdonSale.Service
         #nullable disable
 
         private readonly IHttpContextAccessor _http;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly ApplicationDbContext _db;
 
-        public UserService(IHttpContextAccessor http, 
-                            UserManager<AppUser> userManager)
+        public UserService(IHttpContextAccessor http,
+                            ApplicationDbContext db)
         {
             _http = http;
-            _userManager = userManager;
+            _db = db;
         }
 
         public async Task<AppUser> GetUser()
-        {
-            var name = _http.HttpContext.User.Identity.Name;
-            var user = await _userManager.FindByEmailAsync(name);
-           
-            return user;
+        {  
+            return await _db.User.Where(x => x.Email.Equals(_http.HttpContext.User.Identity.Name)).SingleAsync();
         }
 
        

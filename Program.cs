@@ -13,6 +13,7 @@ using VerdonSale.Seeders;
 using VerdonSale.Service;
 using VerdonSale.Services;
 using VerdonSale.Settings;
+using VerdonSale.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -46,7 +47,6 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddBootstrapComponents();
 builder.Services.AddBlazorBootstrap();
-builder.Services.AddSession();
 builder.Services.AddScoped<UserManager<AppUser>>();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
@@ -55,8 +55,11 @@ builder.Services.AddTransient<RequestLoggerService>();
 builder.Services.AddScoped<StaticFileSeeder>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<UploadService>();
+builder.Services.AddTransient<userTest>();
 builder.Services.AddTransient<MailService>();
+builder.Services.AddTransient<MainService>();
 builder.Services.AddTransient<MailSettings>();
+ 
 
 
 var app = builder.Build();

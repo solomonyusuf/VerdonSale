@@ -15,6 +15,13 @@
                 <div class="card-body">
                   <h4 class="card-title">Add Category</h4>
                  <EditForm Model="category" OnSubmit="@Post" class="forms-sample">
+                    @if (category.Image != null)
+                    {
+                        <div class="form-group">
+                            <label>Category Image</label>
+                            <img src="@category.Image" height="300px" />
+                        </div>
+                    }
                     <div class="form-group">
                     <label>Category Image</label>
                       <InputFile class="form-control" OnChange="@UploadImg" />

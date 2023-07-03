@@ -5,6 +5,7 @@ namespace VerdonSale.Models
     public class AppUser: IdentityUser
     {
         public string Image { get; set; }
+        public Guid CartId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }

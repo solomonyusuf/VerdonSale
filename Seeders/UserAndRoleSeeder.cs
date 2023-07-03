@@ -30,6 +30,7 @@ namespace VerdonSale.Seeders
                     var user = new AppUser();
                     user.UserName = "olafire03@gmail.com";
                     user.Email = "olafire03@gmail.com";
+                    user.FirstName = "Solomon";
                     user.EmailConfirmed = true;
                     IdentityResult result = userManager.CreateAsync
                     (user, "Solomon12!").Result;

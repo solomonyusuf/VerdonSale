@@ -13,6 +13,7 @@ namespace VerdonSale.Models
         public string MiddleName { get; set; }
         public string PhoneNumber { get; set; }
         public string CompanyName { get; set; }
+        public string Email { get; set; }
         public string OrderNote { get; set; }
         public string Address { get; set; }
         public string City { get; set; }

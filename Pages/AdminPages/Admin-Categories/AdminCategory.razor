@@ -1,8 +1,6 @@
 ﻿@page "/admin/category"
-
 @layout AdminLayout
 @inject SalesDbContext _db
-
 
 
 <div class="content-wrapper">
@@ -10,8 +8,7 @@
     </div>
     <h3>Category 
         <a href="/admin/add/category" class="btn btn-primary btn-sm">Add category</a>
-        <button onclick="window.print()" class="btn btn-info btn-sm">Print</button>
-        <button onclick="window.export()" class="btn btn-success btn-sm">Excel</button>
+    
     </h3>
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -27,7 +24,7 @@
                                     <i class="fas fa-search"></i>
                                 </span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Search" aria-label="Search"/>
+                            <input step="any" @bind-value="@input" @oninput="Search" type="text" class="form-control" placeholder="Search @category.Value.Count() categories" aria-label="Search" />
                         </div>
                     </div>
                 </div>
@@ -36,14 +33,22 @@
                     <table class="table table-striped">
                        
                         <tbody>
+                            @if(category.Value.Count() == 0)
+                            {
+                                <tr>
+                                    <td>
+                                        <h5 style="color:red;">No data available...</h5>
+                                    </td>
+                                </tr>
+                            }
                             @foreach (var item in category.Value)
                             {
                                 <tr>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div>
+                                            <a href="@item.Image">
                                                 <img src="@item.Image" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-9 w-9 rounded-xl" alt="user1" />
-                                            </div>
+                                            </a>
                                             
                                         </div>
                                     </td>
@@ -56,7 +61,7 @@
                                         <p class="mb-0 font-semibold leading-tight text-xs">@item.Stamp</p>
                                     </td>
                                     <td>
-                                        <a href="/edit/category/@item.CategoryId" class="btn btn-outline-primary">Edit</a>
+                                        <a href="admin/edit/category/@item.CategoryId" class="btn btn-outline-primary">Edit</a>
                                     </td>
                                     <td>
                                         <button @onclick="@(()=> Delete(item))" class="btn btn-outline-danger">Delete</button>
@@ -74,8 +79,9 @@
 
 @code{
     #nullable disable
-
-    public BehaviorSubject<List<Category>> category = new BehaviorSubject<List<Category>>(null);
+    public string input;
+    public Category model = new();
+    public BehaviorSubject<List<Category>> category = new BehaviorSubject<List<Category>>(new List<Category>());
     protected override async Task OnInitializedAsync()
     {
         await GetAll();
@@ -89,6 +95,7 @@
             var entity = await _db.Categories.ToListAsync();
             category.OnNext(entity);
 
+
         }
         catch(Exception ex)
         {
@@ -98,12 +105,33 @@
         return category;
     }
 
-    public void Delete(Category entity)
+    public async void Search(ChangeEventArgs args)
+    {
+        try
+        {
+
+            var value = args.Value.ToString();
+            if (value == null)
+            {
+                await GetAll();
+            }
+            var filter = GetAll().Result.Value.Where(x => x.CategoryName.ToLowerInvariant().Contains(value.ToLowerInvariant())).ToList();
+            category.OnNext(filter);
+
+        }catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+
+    public async void Delete(Category entity)
     {
         try
         {
             _db.Categories.Remove(entity);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
+            await GetAll();
         }
         catch(Exception ex)
         {

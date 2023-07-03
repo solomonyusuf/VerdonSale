@@ -1,0 +1,82 @@
+﻿@page "/admin/edit/category/{ID}"
+@using BlazorBootstrap
+@using VerdonSale.Services
+@inject SalesDbContext db
+@inject RequestLoggerService _request
+@inject NavigationManager router
+@inject UploadService _service
+@layout AdminLayout
+
+
+<div  class="content-wrapper">
+            <div class="col-md-6 grid-margin">
+              <div class="card shadow">
+                <div class="card-body">
+                  <h4 class="card-title">Edit Category</h4>
+                 <EditForm Model="category" OnSubmit="@Post" class="forms-sample">
+                    @if(category.Image != null)
+                    {
+                        <div class="form-group">
+                            <label>Category Image</label>
+                            <img src="@category.Image" height="300px" />
+                        </div>
+                    }
+                    <div class="form-group">
+                    <label>Category Image</label>
+                      <InputFile class="form-control" OnChange="@UploadImg" />
+                    </div>
+                    <div class="form-group">
+                    <label for="exampleInputEmail1">Category Name</label>
+                      <InputText @bind-Value="@category.CategoryName" type="text" class="form-control" id="exampleInputEmail1" />
+                    </div>
+                   
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                  </EditForm>
+                </div>
+              </div>
+            </div>
+</div>
+@code{
+        
+    [Parameter]
+    public string ID{ get; set; }
+    public Category category = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await db.Categories.FindAsync(Guid.Parse(ID));
+        await base.OnInitializedAsync();
+    }
+
+    public void UploadImg(InputFileChangeEventArgs e)
+    {
+            try
+            {
+                var files = e.GetMultipleFiles().ToList();
+            files.ForEach(async x => category.Image = await _service.UploadFile(x));
+                _request.Log("uploaded file", StatusCodes.Status200OK.ToString());
+            }
+            catch (Exception ex)
+            {
+                _request.Log("upload file failed", StatusCodes.Status501NotImplemented.ToString());
+                Console.WriteLine(ex);
+            }
+        }
+
+    [HttpPut]
+    public async void Post()
+    {
+        try
+        {
+            db.Categories.Update(category);
+            await db.SaveChangesAsync();
+            _request.Log("update category", StatusCodes.Status200OK.ToString());
+            router.NavigateTo("/admin/category");
+        }
+        catch(Exception ex)
+        {
+            _request.Log("update category failed", StatusCodes.Status501NotImplemented.ToString());
+            Console.WriteLine(ex);
+        }
+    }
+}

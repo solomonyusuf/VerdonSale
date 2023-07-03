@@ -1,0 +1,217 @@
+﻿@page "/admin/edit/product/{ID}"
+@using BlazorBootstrap
+@using Microsoft.AspNetCore.Mvc
+@using VerdonSale.Services
+@inject SalesDbContext db
+@inject RequestLoggerService _request
+@inject NavigationManager router
+@inject UploadService _service
+@layout AdminLayout
+
+
+<div class="content-wrapper">
+   <div class="row">
+        <div class="col-md-6 grid-margin">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">Edit Product</h4>
+                    <EditForm Model="product" OnSubmit="@Post" class="forms-sample">
+                        @if (list.Count() > 0)
+                        {
+                            <div class="form-group">
+                                <label>Product Image</label>
+                                <div class="row">
+                                    @foreach (var item in list)
+                                    {
+                                        <div class="col-md-3">
+                                            <img src="@item" height="100px" width="100px" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label>Product Image</label>
+                            <InputFile class="form-control" OnChange="@UploadImg" multiple />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Product Name</label>
+                            <InputText @bind-Value="@product.ProductName" type="text" class="form-control" id="exampleInputEmail1" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Description</label>
+                            <InputTextArea @bind-Value="@product.Description" type="text" class="form-control" id="exampleInputEmail1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Available</label>
+                            <InputNumber @bind-Value="@product.Available" type="text" class="form-control" id="exampleInputEmail1" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Price</label>
+                            <InputNumber @bind-Value="@product.Price" type="text" class="form-control" id="exampleInputEmail1" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Category</label>
+                            <InputSelect @bind-Value="@product.CategoryId" class="form-control">
+                                <option value="NULL" selected>---select one option----</option>
+                                @foreach (var item in (db.Categories.ToList()))
+                                {
+                                    <option value="@item.CategoryId">@item.CategoryName</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tag</label>
+                            <InputSelect @bind-Value="@product.Tag" class="form-control">
+                                <option value="NULL" selected>---select one option----</option>
+                                @foreach (var item in new List<string> { "Hot", "Latest", "New" })
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Status</label>
+                            <InputSelect @bind-Value="@product.Status" class="form-control">
+                                <option value="NULL" selected>---select one option----</option>
+                                @foreach (var item in new List<string> { "Out of Stock", "In stock" })
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin">
+            <div class="card shadow">
+                @if (list.Count() > 0)
+                {
+                    <div class="card-body form-group">
+                        <label>Edit Product Image</label>
+                        <div class="row">
+                            @foreach (var item in product.Images)
+                            {
+                                <div class="col-md-3">
+                                    <img src="@item.ImagePath" height="100px" width="100px" />
+                                    <br/>
+                                    <button style="margin:3px;" @onclick="@(()=> Delete(item))" class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+   </div>
+</div>
+@code {
+    [Parameter]
+    public string ID { get; set; }
+    public Product product = new();
+    public List<string> list = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAll();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task GetAll()
+    {
+        try
+        {
+            list = new List<string>();
+            product = await db.Products.Where(x => x.ProductId == Guid.Parse(ID)).Include(x => x.Images).FirstOrDefaultAsync();
+            product.Images.ForEach(x => list.Add(x.ImagePath));
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+       
+    }
+
+    public void UploadImg(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var files = e.GetMultipleFiles().ToList();
+            files.ForEach(async x => list.Add(await _service.UploadFile(x)));
+            _request.Log("uploaded file", StatusCodes.Status200OK.ToString());
+        }
+        catch (Exception ex)
+        {
+            _request.Log("upload file failed", StatusCodes.Status501NotImplemented.ToString());
+            Console.WriteLine(ex);
+        }
+    }
+
+    [HttpPost]
+    public async void Post()
+    {
+        try
+        {
+            var e = db.Products.Update(product);
+            await db.SaveChangesAsync();
+            SaveImage(e.Entity.ProductId);
+            _request.Log("update product", StatusCodes.Status200OK.ToString());
+            router.NavigateTo("/admin/products");
+        }
+        catch(Exception ex)
+        {
+            _request.Log("update failed", StatusCodes.Status501NotImplemented.ToString());
+            Console.WriteLine(ex);
+        }
+    }
+
+    [HttpPost]
+    public async void SaveImage(Guid Id)
+    {
+        try
+        {
+            foreach (var item in list)
+            {
+                var entity = new ProductImage()
+                    {
+                        ProductId = Id,
+                        ImagePath = item,
+            };
+                await db.ProductImages.AddAsync(entity);
+            }
+            await db.SaveChangesAsync();
+            _request.Log("update product images", StatusCodes.Status200OK.ToString());
+        }
+        catch(Exception ex)
+        {
+            _request.Log("update images failed", StatusCodes.Status501NotImplemented.ToString());
+            Console.WriteLine(ex);
+        }
+    }
+
+    public async void Delete(ProductImage entity)
+    {
+        try
+        {
+            db.ProductImages.Remove(entity);
+            await db.SaveChangesAsync();
+            await GetAll();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+
+    }
+}

@@ -8,11 +8,13 @@ namespace VerdonSale.Models
         public Guid CategoryId { get; set; }
         public string Image { get; set; }
         public string CategoryName { get; set; }
+        public List<Product> Products { get; set; }
         public DateTime Stamp { get; set; }
 
         public Category()
         {
             Stamp = DateTime.Now;
+            Products = new List<Product>();
         }
     }
 }

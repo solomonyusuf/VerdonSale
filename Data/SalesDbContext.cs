@@ -15,7 +15,7 @@ namespace VerdonSale.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
-        public DbSet<Cart> Carts { get; set; }
+        public DbSet<ProductCart> Carts { get; set; }
         public DbSet<CartProduct> CartProducts { get; set; }
         public DbSet<Order> Orders { get; set; }
 

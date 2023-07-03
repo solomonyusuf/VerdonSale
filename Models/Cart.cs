@@ -2,14 +2,14 @@
 
 namespace VerdonSale.Models
 {
-    public class Cart
+    public class ProductCart
     {
         [Key]
         public Guid CartId { get; set; }
         public string AppUserId { get; set; }
         public DateTime Stamp { get; set; }
 
-        public Cart()
+        public ProductCart()
         {
             Stamp = DateTime.Now;
         }

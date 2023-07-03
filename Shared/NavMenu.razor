@@ -1,4 +1,7 @@
-﻿<header class="header header-7">
+﻿@inject MainService main
+@inject IHttpContextAccessor _context
+
+<header class="header header-7">
     <div class="header-top">
         <div class="container-fluid">
             <div class="header-left">
@@ -6,15 +9,11 @@
                     <a href="#">MENU</a>
                     <div class="header-menu">
                         <ul>
-                            
-                           <AuthorizeView>
-                               <NotAuthorized>
-                            <li class="active">
+                           
+                                <li class="active">
                                     <a href="/">Home</a>
-                                </li>
-                                </NotAuthorized>
-                           </AuthorizeView>
-                          
+                                </li>                     
+                           
                             <li>
                                 <a href="/products">products</a>
                             </li>
@@ -103,46 +102,16 @@
                           <a href="/products">products</a>
                         </li>
                         <li>
-                            <a class="sf-with-ul">Category</a>
-
-                            <div class="megamenu megamenu-sm">
-                                <div class="row no-gutters">
-                                    <div class="col-md-6">
-                                        <div class="menu-col">
-                                            <div class="menu-title">Category Details</div><!-- End .menu-title -->
-                                            <ul>
-                                                <li><a href="product.html">Default</a></li>
-                                                <li><a href="product-centered.html">Centered</a></li>
-                                                <li><a href="product-extended.html"><span>Extended Info<span class="tip tip-new">New</span></span></a></li>
-                                                <li><a href="product-gallery.html">Gallery</a></li>
-                                                <li><a href="product-sticky.html">Sticky Info</a></li>
-                                                <li><a href="product-sidebar.html">Boxed With Sidebar</a></li>
-                                                <li><a href="product-fullwidth.html">Full Width</a></li>
-                                                <li><a href="product-masonry.html">Masonry Sticky Info</a></li>
-                                            </ul>
-                                        </div><!-- End .menu-col -->
-                                    </div><!-- End .col-md-6 -->
-
-                                    <div class="col-md-6">
-                                        <div class="banner banner-overlay">
-                                            <a href="category.html">
-                                                <img src="assets/images/menu/banner-2.jpg" alt="Banner">
-
-                                                <div class="banner-content banner-content-bottom">
-                                                    <div class="banner-title text-white">New Trends<br><span><strong>spring @DateTime.Now.Year</strong></span></div><!-- End .banner-title -->
-                                                </div><!-- End .banner-content -->
-                                            </a>
-                                        </div><!-- End .banner -->
-                                    </div><!-- End .col-md-6 -->
-                                </div><!-- End .row -->
-                            </div><!-- End .megamenu megamenu-sm -->
-                        </li>
-                        <li>
                             <a href="/blog">Blog</a>
                         </li>
-                        <li>
-                            <a href="/dashboard">Admin</a>  
-                        </li>
+                        <AuthorizeView Roles="Admin,Manager">
+                            <Authorized>
+                                <li>
+                                    <a href="/dashboard">Admin</a>
+                                </li>
+                            </Authorized>
+                        </AuthorizeView>
+                       
                     </ul><!-- End .menu -->
                 </nav><!-- End .main-nav -->
             </div><!-- End .header-left -->
@@ -158,18 +127,31 @@
                         </div><!-- End .header-search-wrapper -->
                     </form>
                 </div><!-- End .header-search -->
-
-                <div class="dropdown cart-dropdown">
-                    <a href="/cart" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-display="static">
-                        <i class="icon-shopping-cart"></i>
-                        <span class="cart-count">2</span>
-                    </a>
-                </div><!-- End .cart-dropdown -->
+                <AuthorizeView>
+                    <Authorized>
+                       <div class="dropdown cart-dropdown">
+                        <a href="/cart" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <i class="icon-shopping-cart"></i>
+                            <span class="cart-count">@Cart.Value</span>
+                        </a>
+                    </div><!-- End .cart-dropdown -->
+                    </Authorized>
+                </AuthorizeView>
+                
             </div><!-- End .header-right -->
         </div><!-- End .container-fluid -->
     </div><!-- End .header-middle -->
 </header><!-- End .header -->
 @code {
+    public BehaviorSubject<int> Cart = new BehaviorSubject<int>(0);
+
+
+    protected override async Task OnInitializedAsync()
+    {      
+        Cart.OnNext(main.FetchCart().Result.Count());
+        await base.OnInitializedAsync();
+    }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;

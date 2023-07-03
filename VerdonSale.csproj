@@ -10,9 +10,13 @@
 
   <ItemGroup>
     <Compile Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <Compile Remove="Pages\AdminPages\Admin-Products\Shared\**" />
     <Content Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <Content Remove="Pages\AdminPages\Admin-Products\Shared\**" />
     <EmbeddedResource Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <EmbeddedResource Remove="Pages\AdminPages\Admin-Products\Shared\**" />
     <None Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <None Remove="Pages\AdminPages\Admin-Products\Shared\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\AdminPages\Admin-Products\" />
     <Folder Include="wwwroot\StaticFiles\" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿@page "/summary"
 @using VerdonSale.Service
-
-
+@inject UserService _user
+@inject SalesDbContext _db
  
  <main class="main">
 			<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -12,8 +12,8 @@
 			<nav aria-label="breadcrumb" class="breadcrumb-nav">
 				<div class="container">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-						<li class="breadcrumb-item"><a href="#">Shop</a></li>
+						<li class="breadcrumb-item"><a>Home</a></li>
+						<li class="breadcrumb-item"><a>Shop</a></li>
 						<li class="breadcrumb-item active" aria-current="page">Checkout</li>
 					</ol>
 				</div><!-- End .container -->
@@ -22,25 +22,19 @@
 			<div class="page-content">
 				<div class="checkout">
 					<div class="container">
-						<div class="checkout-discount">
-							<form action="#">
-								<input type="text" class="form-control" required id="checkout-discount-input">
-								<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-							</form>
-						</div><!-- End .checkout-discount -->
-						<form action="#">
+						<EditForm Model="@order" action="#">
 							<div class="row">
 								<div class="col-lg-9">
 									<h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
 										<div class="row">
 											<div class="col-sm-6">
 												<label>First Name *</label>
-												<input type="text" class="form-control" required>
+												<InputText @bind-Value="order.FirstName" type="text" class="form-control" required/>
 											</div><!-- End .col-sm-6 -->
 
 											<div class="col-sm-6">
 												<label>Last Name *</label>
-												<input type="text" class="form-control" required>
+									<InputText @bind-Value="order.LastName" type="text" class="form-control" required />
 											</div><!-- End .col-sm-6 -->
 										</div><!-- End .row -->
 
@@ -48,51 +42,40 @@
 										<input type="text" class="form-control">
 
 										<label>Country *</label>
-										<input type="text" class="form-control" required>
+							<InputText @bind-Value="order.Country" type="text" class="form-control" required />
 
 										<label>Street address *</label>
-										<input type="text" class="form-control" placeholder="House number and Street name" required>
-										<input type="text" class="form-control" placeholder="Appartments, suite, unit etc ..." required>
+							<InputText @bind-Value="order.FirstName" type="text" class="form-control" placeholder="Appartments, suite, unit etc ... House number and Street name" required />
 
 										<div class="row">
 											<div class="col-sm-6">
 												<label>Town / City *</label>
-												<input type="text" class="form-control" required>
+												<InputText @bind-Value="order.City" type="text" class="form-control" required/>
 											</div><!-- End .col-sm-6 -->
 
 											<div class="col-sm-6">
 												<label>State / County *</label>
-												<input type="text" class="form-control" required>
+												<InputText @bind-Value="order.State" type="text" class="form-control" required/>
 											</div><!-- End .col-sm-6 -->
 										</div><!-- End .row -->
 
 										<div class="row">
 											<div class="col-sm-6">
 												<label>Postcode / ZIP *</label>
-												<input type="text" class="form-control" required>
+												<InputText @bind-Value="order.Postalcode" type="text" class="form-control" required/>
 											</div><!-- End .col-sm-6 -->
 
 											<div class="col-sm-6">
 												<label>Phone *</label>
-												<input type="tel" class="form-control" required>
+									<InputText @bind-Value="order.PhoneNumber" type="tel" class="form-control" required />
 											</div><!-- End .col-sm-6 -->
 										</div><!-- End .row -->
 
 										<label>Email address *</label>
-										<input type="email" class="form-control" required>
-
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input" id="checkout-create-acc">
-											<label class="custom-control-label" for="checkout-create-acc">Create an account?</label>
-										</div><!-- End .custom-checkbox -->
-
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input" id="checkout-diff-address">
-											<label class="custom-control-label" for="checkout-diff-address">Ship to a different address?</label>
-										</div><!-- End .custom-checkbox -->
+										<InputText @bind-Value="order.Email" type="email" class="form-control" required/>
 
 										<label>Order notes (optional)</label>
-										<textarea class="form-control" cols="30" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+							<InputTextArea @bind-Value="order.OrderNote" class="form-control" cols="30" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></InputTextArea>
 								</div><!-- End .col-lg-9 -->
 								<aside class="col-lg-3">
 									<div class="summary">
@@ -107,18 +90,18 @@
 											</thead>
 
 											<tbody>
-												<tr>
-													<td><a href="#">Beige knitted elastic runner shoes</a></td>
-													<td>$84.00</td>
-												</tr>
+												@foreach (var item in products)
+												{
+													<tr>
+														<td><strong>@item.ProductName</strong></td>
+														<td>$@item.Price.00</td>
+													</tr>
+												}
 
-												<tr>
-													<td><a href="#">Blue utility pinafore denimdress</a></td>
-													<td>$76,00</td>
-												</tr>
+												
 												<tr class="summary-subtotal">
 													<td>Subtotal:</td>
-													<td>$160.00</td>
+											<td>$@(products.Select(x => x.Price * x.Quantity).Sum()).00</td>
 												</tr><!-- End .summary-subtotal -->
 												<tr>
 													<td>Shipping:</td>
@@ -214,8 +197,30 @@
 									</div><!-- End .summary -->
 								</aside><!-- End .col-lg-3 -->
 							</div><!-- End .row -->
-						</form>
+						</EditForm>
 					</div><!-- End .container -->
 				</div><!-- End .checkout -->
 			</div><!-- End .page-content -->
 		</main><!-- End .main -->
+@code{
+	public AppUser user = new();
+	public Order order = new();
+	public List<CartProduct> products = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		user = await _user.GetUser();
+		products = await _db.CartProducts.Where(x => x.CartId == user.CartId).ToListAsync();
+		await Task.Run(SetParametersAsync());
+		await base.OnInitializedAsync();
+	}
+	
+	async void SetParametersAsync()
+	{
+		order.FirstName = user.FirstName;
+		order.LastName = user.LastName;
+		order.MiddleName = user.MiddleName;
+
+	}
+
+}

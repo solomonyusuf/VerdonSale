@@ -1,0 +1,99 @@
+﻿@inject UserManager<AppUser> _user
+@inject IHttpContextAccessor _context
+
+    <style>
+        .active{
+        background-color: #f2f2f2;
+        border-style:solid;
+        border:3px;
+        border-color:blue;
+        }
+    </style>
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item nav-profile">
+            <div class="nav-link">
+                <div class="profile-image">
+                    <img src="images/faces/face5.jpg" alt="image" />
+                </div>
+                <div class="profile-name">
+                    <p class="name">
+                        Welcome @user.FirstName
+                    </p>
+                    <p class="designation">
+                        @_user.GetRolesAsync(@user).Result.First()
+                    </p>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" href="/dashboard">
+                <i class="fa fa-home menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" href="/admin/category">
+                <i class="fa fa-puzzle-piece menu-icon"></i>
+                <span class="menu-title">Categories</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" href="/admin/products">
+                <i class="fab fa-trello menu-icon"></i>
+                <span class="menu-title">Products</span>
+                <i class="menu-arrow"></i>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link">
+                <i class="fas fa-columns menu-icon"></i>
+                <span class="menu-title">Orders</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" >
+                <i class="far fa-compass menu-icon"></i>
+                <span class="menu-title">Transactions</span>
+            </NavLink>  
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link">
+                <i class="fas fa-clipboard-list menu-icon"></i>
+                <span class="menu-title">Requests</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link">
+                <i class="fab fa-wpforms menu-icon"></i>
+                <span class="menu-title">Contacts</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link">
+                <i class="fa fa-users menu-icon"></i>
+                <span class="menu-title">Users</span>
+                <i class="menu-arrow"></i>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" href="pages/ui-features/popups.html">
+                <i class="fas fa-minus-square menu-icon"></i>
+                <span class="menu-title">Blog</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink ActiveClass="active" class="nav-link" href="pages/ui-features/notifications.html">
+                <i class="fas fa-bell menu-icon"></i>
+                <span class="menu-title">Notifications</span>
+            </NavLink>
+        </li>
+        
+    </ul>
+</nav>
+@code
+{
+    [Parameter]
+    public AppUser user { get; set; }
+    
+}

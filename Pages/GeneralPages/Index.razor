@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject IHttpContextAccessor _context
+@inject NavigationManager router
 @using VerdonSale.Service
 
 <main class="main">
@@ -1159,3 +1161,26 @@
 
 
 </main><!-- End .main -->
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+          if (_context.HttpContext.User.Identity.Name != null)
+                  router.NavigateTo("/products", true);
+        await base.OnInitializedAsync();
+    }
+
+    void Navigate()
+    {
+        try
+        {
+          
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+}

@@ -1,0 +1,166 @@
+﻿@page "/admin/products"
+@layout AdminLayout
+@inject SalesDbContext _db
+
+
+<div class="content-wrapper">
+    <div class="flex flex-wrap -mx-3">
+    </div>
+    <h3>Products 
+        <a href="/admin/add/product" class="btn btn-primary btn-sm">Add Product</a>
+    
+    </h3>
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4 class="card-title">Products Table</h4>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                            <input step="any" @bind-value="@input" @oninput="Search" type="text" class="form-control" placeholder="Search @product.Value.Count() products" aria-label="Search" />
+                        </div>
+                    </div>
+                </div>
+               <br/>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                       <thead>
+                           <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Available</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th></th>
+                        <th></th>
+                            </tr>
+                       </thead>
+                        <tbody>
+                            @if (product.Value.Count() == 0)
+                            {
+                                <tr>
+                                    <td>
+                                        <h5 style="color:red;">No data available...</h5>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var item in product.Value)
+                            {
+                                <tr>
+                                    @if(@item.Images.Count() > 0)
+                                    {
+                                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                            <div class="flex px-2 py-1">
+                                                <a target="_blank" href="@item.Images.First().ImagePath">
+                                                    <img src="@item.Images.First().ImagePath" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-9 w-9 rounded-xl" alt="user1" />
+                                                </a>
+
+                                            </div>
+        
+                                        </td>
+                                    }
+                                    <td>
+                                        <p class="mb-0 font-semibold leading-tight text-xs">@item.ProductName</p>
+                                    </td>
+                                    <td>
+                                        <p>@item.Price</p>
+                                    </td>
+                                    <td>
+                                        <p>@item.Available</p>
+                                    </td>
+                                    <td>
+                                        <p>@item.Status</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 font-semibold leading-tight text-xs">@item.Stamp</p>
+                                    </td>
+                                    <td>
+                                        <a href="admin/edit/product/@item.ProductId" class="btn btn-outline-primary">Edit</a>
+                                    </td>
+                                    <td>
+                                        <button @onclick="@(()=> Delete(item))" class="btn btn-outline-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+   </div>
+
+
+@code{
+    #nullable disable
+    public string input;
+    public BehaviorSubject<List<Product>> product = new BehaviorSubject<List<Product>>(new List<Product>());
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAll();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<BehaviorSubject<List<Product>>> GetAll()
+    {
+        try
+        {
+            var entity = await _db.Products.Include(x=> x.Images).ToListAsync();
+            product.OnNext(entity);
+
+
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        return product;
+    }
+
+    public async void Search(ChangeEventArgs args)
+    {
+        try
+        {
+
+            var value = args.Value.ToString();
+            if (value == null)
+            {
+                await GetAll();
+            }
+            var filter = GetAll().Result.Value.Where(x => x.ProductName.ToLowerInvariant().Contains(value.ToLowerInvariant())).ToList();
+            product.OnNext(filter);
+
+        }catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+
+    public async void Delete(Product entity)
+    {
+        try
+        {
+            _db.Products.Remove(entity);
+            await _db.SaveChangesAsync();
+            await GetAll();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+       
+    }
+
+    
+}
