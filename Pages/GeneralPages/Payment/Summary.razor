@@ -211,7 +211,7 @@
 	{
 		user = await _user.GetUser();
 		products = await _db.CartProducts.Where(x => x.CartId == user.CartId).ToListAsync();
-		await Task.Run(SetParametersAsync());
+	//	await Task.Run(SetParametersAsync());
 		await base.OnInitializedAsync();
 	}
 	
