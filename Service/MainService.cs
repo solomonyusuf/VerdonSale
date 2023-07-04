@@ -41,16 +41,19 @@ namespace VerdonSale.Service
             var entity = await _user.GetUser();
             try
             {
-                if (entity.CartId.ToString() == "00000000-0000-0000-0000-000000000000" && entity != null)
+                if (entity != null)
                 {
-                    var cartEntity = new ProductCart() { AppUserId = entity.Id };
-                    await _db.Carts.AddAsync(cartEntity);
-                    await _db.SaveChangesAsync();
-                    entity.CartId = cartEntity.CartId;
-                    _app.User.Update(entity);
-                    await _app.SaveChangesAsync();
+                    if (entity.CartId.ToString() == "00000000-0000-0000-0000-000000000000" && entity != null)
+                    {
+                        var cartEntity = new ProductCart() { AppUserId = entity.Id };
+                        await _db.Carts.AddAsync(cartEntity);
+                        await _db.SaveChangesAsync();
+                        entity.CartId = cartEntity.CartId;
+                        _app.User.Update(entity);
+                        await _app.SaveChangesAsync();
 
-                  
+
+                    }
                 }
             }
             catch (Exception e)

@@ -83,7 +83,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
